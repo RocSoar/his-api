@@ -1,0 +1,56 @@
+server:
+  jetty:
+    threads:
+      #acceptors线程池用于接受HTTP请求
+      acceptors: 8
+      #selectors线程池用于处理HTTP数据包
+      selectors: 16
+      #worker线程池负责调用Web方法
+      min: 16
+      max: 200
+  port: 7700
+  servlet:
+    context-path: /his-api
+
+spring:
+  servlet:
+    multipart:
+      #允许上传文件
+      enabled: true
+      #每个文件最大不能超过20M
+      max-file-size: 20MB
+      #HTTP请求不能超过20M
+      max-request-size: 20MB
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://${MYCAT_HOST}:8066/his?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+      username: ${MYCAT_USERNAME}
+      password: ${MYCAT_PASSWORD}
+      initial-size: 8
+      max-active: 16
+      min-idle: 8
+      max-wait: 60000
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      validation-query: SELECT 1
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.roc.his.api.db.pojo
+  configuration:
+    #输出执行的SQL语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    #SpringBoot日志级别
+    root: info
+    #MyBatis的日志级别
+    com.roc.his.api.db.dao: warn
+  pattern:
+    console: "%d{yyyy/MM/dd HH:mm:ss}  %-5level  %msg%n"
+
