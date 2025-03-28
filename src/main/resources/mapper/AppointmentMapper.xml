@@ -3,5 +3,149 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roc.his.api.db.dao.AppointmentMapper">
+    <select id="searchByOrderId" parameterType="int" resultType="HashMap">
+        SELECT id,
+               name,
+               sex,
+               tel,
+               TIMESTAMPDIFF(YEAR, birthday, NOW()) AS age,
+               date,
+               status
+        FROM tb_appointment
+        WHERE order_id = #{orderId}
+        ORDER BY id DESC
+    </select>
+
+    <insert id="insert" parameterType="AppointmentEntity">
+        INSERT INTO tb_appointment
+        SET uuid= #{uuid},
+            order_id = #{orderId},
+            date = #{date},
+            name = #{name},
+            sex = #{sex},
+            pid = #{pid},
+            birthday = #{birthday},
+            tel = #{tel},
+            mailing_address = #{mailingAddress},
+            company = #{company},
+            status = 1
+    </insert>
+
+    <select id="searchFrontAppointmentByPage" parameterType="Map" resultType="HashMap">
+        SELECT a.id,
+        o.goods_title AS goodsTitle,
+        a.name,
+        a.date,
+        a.status,
+        r.file_path AS filePath
+        FROM tb_appointment a
+        JOIN tb_order o ON a.order_id = o.id
+        LEFT JOIN tb_checkup_report r ON a.id = r.appointment_id
+        WHERE o.customer_id = #{customerId}
+        <if test="status!=null">
+            AND a.status = #{status}
+        </if>
+        <if test="date!=null">
+            AND a.date = #{date}
+        </if>
+        <if test="keyword!=null">
+            AND (
+            o.goods_title LIKE CONCAT( "%", #{keyword}, "%" ) OR
+            a.`name` = #{keyword} OR
+            a.tel = #{keyword}
+            )
+        </if>
+        ORDER BY a.id DESC
+        LIMIT #{start}, #{length}
+    </select>
+
+    <select id="searchFrontAppointmentCount" parameterType="Map" resultType="long">
+        SELECT COUNT(*)
+        FROM tb_appointment a
+        JOIN tb_order o ON a.order_id = o.id
+        WHERE o.customer_id = #{customerId}
+        <if test="status!=null">
+            AND a.status = #{status}
+        </if>
+        <if test="date!=null">
+            AND a.date = #{date}
+        </if>
+        <if test="keyword!=null">
+            AND (
+            o.goods_title LIKE CONCAT( "%", #{keyword}, "%" ) OR
+            a.`name` = #{keyword} OR
+            a.tel = #{keyword}
+            )
+        </if>
+    </select>
+
+    <select id="searchByPage" parameterType="Map" resultType="HashMap">
+        SELECT a.id,
+        a.name,
+        a.sex,
+        CONCAT(SUBSTRING(a.tel,1,3),"****",SUBSTRING(a.tel,8,4)) AS tel,
+        CONCAT(SUBSTRING(a.pid,1,3),"***********",SUBSTRING(a.pid,15,4)) AS pid,
+        TIMESTAMPDIFF(YEAR,a.birthday,NOW()) AS age,
+        a.company,
+        a.status,
+        o.goods_title AS title,
+        o.snapshot_id AS snapshotId
+        FROM tb_appointment a
+        JOIN tb_order o ON a.order_id = o.id
+        <where>
+            <if test="date!=null">
+                AND a.date = #{date}
+            </if>
+            <if test="name!=null">
+                AND a.name LIKE CONCAT("%",#{name},"%")
+            </if>
+            <if test="tel!=null">
+                AND a.tel = #{tel}
+            </if>
+            <if test="status!=null">
+                AND a.status = #{status}
+            </if>
+        </where>
+        ORDER BY a.id DESC
+        LIMIT #{start}, #{length}
+    </select>
+
+    <select id="searchCount" parameterType="Map" resultType="long">
+        SELECT COUNT(*)
+        FROM tb_appointment
+        <where>
+            <if test="date!=null">
+                AND date = #{date}
+            </if>
+            <if test="name!=null">
+                AND name LIKE CONCAT("%",#{name},"%")
+            </if>
+            <if test="tel!=null">
+                AND tel = #{tel}
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByIds">
+        DELETE FROM tb_appointment
+        WHERE id IN
+        <foreach collection="array" open="(" separator="," close=")" item="one">
+            #{one}
+        </foreach>
+        AND status = 1
+    </delete>
+
+    <select id="hasAppointInToday" parameterType="Map" resultType="HashMap">
+        SELECT id, status
+        FROM tb_appointment
+        WHERE date = CURRENT_DATE()
+          AND pid = #{pid}
+          AND name = #{name}
+          AND sex = #{sex}
+        LIMIT 1
+    </select>
 
 </mapper>

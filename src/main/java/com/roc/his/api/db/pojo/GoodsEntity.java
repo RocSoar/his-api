@@ -1,12 +1,15 @@
 package com.roc.his.api.db.pojo;
 
 import java.math.BigDecimal;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * @TableName tb_goods
  */
 @Data
+@Builder
 public class GoodsEntity {
     private Integer id;
 
@@ -16,13 +19,13 @@ public class GoodsEntity {
 
     private String description;
 
-    private String checkup1;
+    private String checkup_1;
 
-    private String checkup2;
+    private String checkup_2;
 
-    private String checkup3;
+    private String checkup_3;
 
-    private String checkup4;
+    private String checkup_4;
 
     private String checkup;
 

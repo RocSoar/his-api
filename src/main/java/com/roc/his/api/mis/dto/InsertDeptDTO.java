@@ -1,11 +1,11 @@
 package com.roc.his.api.mis.dto;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 public class InsertDeptDTO {
@@ -19,7 +19,7 @@ public class InsertDeptDTO {
     @Email(message = "email不正确")
     private String email;
 
-    @Length(max = 20, message = "desc不能超过20个字符")
+    @Size(max = 20, message = "desc不能超过20个字符")
     private String desc;
 }
 

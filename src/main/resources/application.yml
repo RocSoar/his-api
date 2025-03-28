@@ -112,7 +112,7 @@ sa-token:
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.roc.his.api.db.pojo
+  type-aliases-package: com.roc.his.api.db.pojo, com.roc.his.api.mis.vo
   configuration:
     #输出执行的SQL语句
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -127,3 +127,38 @@ logging:
   pattern:
     console: "%d{yyyy/MM/dd HH:mm:ss}  %-5level  %msg%n"
 
+minio:
+  endpoint: http://${DEBIAN_HOST}:9000
+  access-key: root
+  secret-key: ${GENERIC_PASSWORD}
+  bucket: his
+
+wechat:
+  app-id: ${appid}
+  app-secret: ${appsecret}
+  pay:
+    v3:
+      his-vue:
+        app-id: ${appid}
+        app-v3-secret: ${appv3secret}
+        mch-id: ${mchid}
+        domain: ${domain}
+        cert-path: apiclient_cert.p12
+
+wechat-payment-notifyUrl: "/front/order/paymentCallback"
+wechat-refund-notifyUrl: "/front/order/refundCallback"
+
+tencent:
+  cloud:
+    appId: ${TCloudAppId}
+    secretId: ${TCloudSecretId}
+    secretKey: ${TCloudSecretKey}
+    face:
+      groupId: his
+      region: ap-beijing
+  im:
+    sdkAppId: ${imSDKAppId}
+    secretKey: ${imSecretKey}
+    managerId: administrator
+    customerServiceId: customer_service_1
+    baseUrl: "https://console.tim.qq.com/"
